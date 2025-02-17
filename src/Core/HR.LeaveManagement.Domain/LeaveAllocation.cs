@@ -1,0 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using src.Core.HR.LeaveManagement.Domain.Common;
+
+namespace src.Core.HR.LeaveManagement.Domain
+{
+    public class LeaveAllocation : BaseDomainEntity
+    {
+        public int NumberOfDays { get; set; }
+        public LeaveType LeaveType { get; set; }
+        public int LeaveTypeId { get; set; }
+        public int Period { get; set; }
+        public string EmployeeId { get; set; }
+    }
+}
