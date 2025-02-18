@@ -7,12 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="DTOs/Common/" />
     <Folder Include="Persistence/" />
     <Folder Include="Persistence/Contracts/" />
+    <Folder Include="Profiles/" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../HR.LeaveManagement.Domain/HR.LeaveManagement.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
   </ItemGroup>
 
 </Project>
