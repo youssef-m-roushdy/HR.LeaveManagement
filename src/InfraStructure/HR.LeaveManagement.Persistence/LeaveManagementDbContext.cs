@@ -35,8 +35,8 @@ namespace HR.LeaveManagement.Persistence
             return base.SaveChangesAsync(cancellationToken);
         }
 
-        public DbSet<LeaveType> LeaveType { get; set; }
-        public DbSet<LeaveRequest> LeaveRequest { get; set; }
-        public DbSet<LeaveAllocation> LeaveAllocation { get; set; }
+        public DbSet<LeaveType> LeaveTypes { get; set; }
+        public DbSet<LeaveRequest> LeaveRequests { get; set; }
+        public DbSet<LeaveAllocation> LeaveAllocations { get; set; }
     }
 }
