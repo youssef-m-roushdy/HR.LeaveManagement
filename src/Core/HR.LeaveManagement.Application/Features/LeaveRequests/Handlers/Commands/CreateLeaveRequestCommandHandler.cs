@@ -10,6 +10,8 @@ using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Application.Reponses;
 using HR.LeaveManagement.Domain;
 using MediatR;
+using HR.LeaveManagement.Application.Contracts.Infrastructure;
+using HR.LeaveManagement.Application.Models;
 
 namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 {
@@ -17,12 +19,19 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
     {
         private readonly ILeaveRequestRepository _leaveRequestRepository;
         private readonly ILeaveTypeRepository _leaveTypeRepository;
+        private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
-        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepository, IMapper mapper, ILeaveTypeRepository leaveTypeRepository)
+        public CreateLeaveRequestCommandHandler(
+        ILeaveRequestRepository leaveRequestRepository,
+        IMapper mapper,
+        ILeaveTypeRepository leaveTypeRepository,
+        IEmailSender emailSender
+        )
         {
             _leaveRequestRepository = leaveRequestRepository;
             _mapper = mapper;
             _leaveTypeRepository = leaveTypeRepository;
+            _emailSender = emailSender;
         }
 
         public async Task<BaseCommandResponse> Handle(CreateLeaveRequestCommand request, CancellationToken cancellationToken)
@@ -44,6 +53,23 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             response.Success = true;
             response.Message = "Creation successful";
             response.Id = leaveRequest.Id;
+            
+            var email = new Email()
+            {
+                To = "employee@org.com",
+                Body = $"Your leave request for {request.LeaveRequestDto.StartDate:D} to {request.LeaveRequestDto.EndDate}" +
+                $" has been submitted successfully.",
+                Subject = "Leave Request Submitted"
+            };
+
+            try
+            {
+                await _emailSender.SendEmail(email);
+            }
+            catch (Exception ex)
+            {
+                
+            }
 
             return response;
         }
