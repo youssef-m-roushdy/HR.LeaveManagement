@@ -13,12 +13,21 @@ namespace HR.LeaveManagement.Persistence
         public LeaveManagementDbContext(DbContextOptions<LeaveManagementDbContext> options)
         : base(options)
         {
-            
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(LeaveManagementDbContext).Assembly);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("ConnectionStringPlaceholder",
+                    b => b.MigrationsAssembly(typeof(LeaveManagementDbContext).Assembly.FullName));
+            }
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -27,7 +36,7 @@ namespace HR.LeaveManagement.Persistence
             {
                 entry.Entity.LastModifiedDate = DateTime.Now;
 
-                if(entry.State == EntityState.Added)
+                if (entry.State == EntityState.Added)
                 {
                     entry.Entity.DateCreated = DateTime.Now;
                 }

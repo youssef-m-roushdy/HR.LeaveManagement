@@ -56,7 +56,7 @@ namespace HR.LeaveManagement.API.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
-            var response = await _mediator.Send(new DeleteLeaveAllocationCommand{ Id = id});
+            await _mediator.Send(new DeleteLeaveAllocationCommand{ Id = id});
             return NoContent();
         }
     }
