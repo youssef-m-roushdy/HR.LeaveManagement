@@ -1,0 +1,4 @@
+you want to migrate database from the root
+dotnet ef migrations add InitialCreate --project ./src/Infrastructure/HR.LeaveManagement.Persistence/HR.LeaveManagement.Persistence.csproj --startup-project ./src/API/HR.LeaveManagement.API/HR.LeaveManagement.API.csproj
+you want to update database from the root
+dotnet ef database update --project ./src/Infrastructure/HR.LeaveManagement.Persistence/HR.LeaveManagement.Persistence.csproj --startup-project ./src/API/HR.LeaveManagement.API/HR.LeaveManagement.API.csproj
