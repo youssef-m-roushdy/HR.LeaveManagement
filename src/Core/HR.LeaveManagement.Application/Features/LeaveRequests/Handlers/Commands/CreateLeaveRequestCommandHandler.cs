@@ -40,36 +40,40 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             var validator = new CreateLeaveRequestDtoValidator(_leaveTypeRepository);
             var validationResult = await validator.ValidateAsync(request.LeaveRequestDto);
 
-            if(validationResult.IsValid == false)
+            if (validationResult.IsValid == false)
             {
                 response.Success = false;
                 response.Message = "Creation failed";
                 response.Errors = validationResult.Errors.Select(q => q.ErrorMessage).ToList();
             }
-
-            var leaveRequest = _mapper.Map<LeaveRequest>(request.LeaveRequestDto);
-            leaveRequest = await _leaveRequestRepository.Add(leaveRequest);
-
-            response.Success = true;
-            response.Message = "Creation successful";
-            response.Id = leaveRequest.Id;
-            
-            var email = new Email()
+            else
             {
-                To = "employee@org.com",
-                Body = $"Your leave request for {request.LeaveRequestDto.StartDate:D} to {request.LeaveRequestDto.EndDate}" +
-                $" has been submitted successfully.",
-                Subject = "Leave Request Submitted"
-            };
+                var leaveRequest = _mapper.Map<LeaveRequest>(request.LeaveRequestDto);
+                leaveRequest = await _leaveRequestRepository.Add(leaveRequest);
 
-            try
-            {
-                await _emailSender.SendEmail(email);
+                response.Success = true;
+                response.Message = "Creation successful";
+                response.Id = leaveRequest.Id;
+
+                var email = new Email()
+                {
+                    To = "employee@org.com",
+                    Body = $"Your leave request for {request.LeaveRequestDto.StartDate:D} to {request.LeaveRequestDto.EndDate}" +
+                    $" has been submitted successfully.",
+                    Subject = "Leave Request Submitted"
+                };
+
+                try
+                {
+                    await _emailSender.SendEmail(email);
+                }
+                catch (Exception ex)
+                {
+
+                }
+
             }
-            catch (Exception ex)
-            {
-                
-            }
+
 
             return response;
         }

@@ -28,20 +28,21 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
             var validator = new CreateLeaveTypeDtoValidator();
             var validationResult = await validator.ValidateAsync(request.LeaveTypeDto);
 
-            if(validationResult.IsValid == false)
+            if (validationResult.IsValid == false)
             {
                 response.Success = false;
                 response.Message = "Creation failed";
                 response.Errors = validationResult.Errors.Select(q => q.ErrorMessage).ToList();
             }
+            else
+            {
+                var leaveType = _mapper.Map<LeaveType>(request.LeaveTypeDto);
+                leaveType = await _leaveTypeRepository.Add(leaveType);
 
-            var leaveType = _mapper.Map<LeaveType>(request.LeaveTypeDto);
-            leaveType = await _leaveTypeRepository.Add(leaveType);
-
-            response.Success = true;
-            response.Message = "Creation successful";
-            response.Id = leaveType.Id;
-
+                response.Success = true;
+                response.Message = "Creation successful";
+                response.Id = leaveType.Id;
+            }
             return response;
         }
     }

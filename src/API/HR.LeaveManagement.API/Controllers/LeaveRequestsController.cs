@@ -22,50 +22,60 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<ActionResult<List<LeaveRequestDto>>> Get()
         {
             var leaveRequests = await _mediator.Send(new GetLeaveRequestListRequest());
             return Ok(leaveRequests);
         }
 
-        
+
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById([FromRoute]int id)
+        public async Task<ActionResult<LeaveRequestDto>> GetById([FromRoute] int id)
         {
-            var leaveRequests = await _mediator.Send(new GetLeaveRequestDetailRequest{Id = id});
+            var leaveRequests = await _mediator.Send(new GetLeaveRequestDetailRequest { Id = id });
             return Ok(leaveRequests);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]CreateLeaveRequestDto leaveRequest)
+        public async Task<ActionResult> Post([FromBody] CreateLeaveRequestDto leaveRequest)
         {
-            var command = new CreateLeaveRequestCommand{ LeaveRequestDto = leaveRequest};
+            var command = new CreateLeaveRequestCommand { LeaveRequestDto = leaveRequest };
             var response = await _mediator.Send(command);
             return Ok(response);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update([FromRoute]int id, [FromBody]UpdateLeaveRequestDto leaveRequest)
+        public async Task<ActionResult> Update([FromRoute] int id, [FromBody] UpdateLeaveRequestDto leaveRequest)
         {
-            var command = new UpdateLeaveRequestCommand{ LeaveRequestDto = leaveRequest};
+            if (leaveRequest == null)
+            {
+                return BadRequest("Leave request data cannot be null.");
+            }
+
+            var command = new UpdateLeaveRequestCommand { Id = id, LeaveRequestDto = leaveRequest };
             var response = await _mediator.Send(command);
             return NoContent();
         }
 
         [HttpPut("changeapproval/{id:int}")]
-        public async Task<IActionResult> ChangeApproval([FromRoute]int id, [FromBody]ChangeLeaveRequestApprovalDto changeLeaveRequestApproval)
+        public async Task<ActionResult> ChangeApproval([FromRoute] int id, [FromBody] ChangeLeaveRequestApprovalDto changeLeaveRequestApproval)
         {
-            var command = new UpdateLeaveRequestCommand{ Id = id ,ChangeLeaveRequestApprovalDto = changeLeaveRequestApproval};
+            if (changeLeaveRequestApproval == null)
+            {
+                return BadRequest("Approval data cannot be null.");
+            }
+
+            var command = new UpdateLeaveRequestCommand { Id = id, ChangeLeaveRequestApprovalDto = changeLeaveRequestApproval };
             var response = await _mediator.Send(command);
             return NoContent();
         }
 
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute]int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            await _mediator.Send(new DeleteLeaveRequestCommand{ Id = id});
+            await _mediator.Send(new DeleteLeaveRequestCommand { Id = id });
             return NoContent();
         }
     }

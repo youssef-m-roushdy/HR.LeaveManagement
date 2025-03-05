@@ -22,7 +22,7 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<ActionResult<List<LeaveAllocationDto>>> Get()
         {
             var leaveAllocations = await _mediator.Send(new GetLeaveAllocationListRequest());
             return Ok(leaveAllocations);
@@ -30,7 +30,7 @@ namespace HR.LeaveManagement.API.Controllers
 
         
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById([FromRoute]int id)
+        public async Task<ActionResult<LeaveAllocationDto>> GetById([FromRoute]int id)
         {
             var leaveAllocations = await _mediator.Send(new GetLeaveAllocationDetailRequest{Id = id});
             return Ok(leaveAllocations);
@@ -38,7 +38,7 @@ namespace HR.LeaveManagement.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]CreateLeaveAllocationDto leaveAllocation)
+        public async Task<ActionResult> Post([FromBody]CreateLeaveAllocationDto leaveAllocation)
         {
             var command = new CreateLeaveAllocationCommand{ LeaveAllocationDto = leaveAllocation};
             var response = await _mediator.Send(command);
@@ -46,7 +46,7 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update([FromRoute]int id, [FromBody]UpdateLeaveAllocationDto leaveAllocation)
+        public async Task<ActionResult> Update([FromRoute]int id, [FromBody]UpdateLeaveAllocationDto leaveAllocation)
         {
             var command = new UpdateLeaveAllocationCommand{ LeaveAllocationDto = leaveAllocation};
             var response = await _mediator.Send(command);
@@ -54,7 +54,7 @@ namespace HR.LeaveManagement.API.Controllers
         }
   
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute]int id)
+        public async Task<ActionResult> Delete([FromRoute]int id)
         {
             await _mediator.Send(new DeleteLeaveAllocationCommand{ Id = id});
             return NoContent();

@@ -23,7 +23,7 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<ActionResult<List<LeaveTypeDto>>> Get()
         {
             var leaveTypes = await _mediator.Send(new GetLeaveTypeListRequest());
             return Ok(leaveTypes);
@@ -31,7 +31,7 @@ namespace HR.LeaveManagement.API.Controllers
 
         
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById([FromRoute]int id)
+        public async Task<ActionResult<LeaveTypeDto>> GetById([FromRoute]int id)
         {
             var leaveTypes = await _mediator.Send(new GetLeaveTypeDetailRequest{Id = id});
             return Ok(leaveTypes);
@@ -39,7 +39,9 @@ namespace HR.LeaveManagement.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]CreateLeaveTypeDto leaveType)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult> Post([FromBody]CreateLeaveTypeDto leaveType)
         {
             var command = new CreateLeaveTypeCommand{ LeaveTypeDto = leaveType};
             var response = await _mediator.Send(command);
@@ -47,7 +49,8 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Post([FromRoute]int id, [FromBody]LeaveTypeDto leaveType)
+        [ProducesResponseType(StatusCodes.Status304NotModified)]
+        public async Task<ActionResult> Post([FromRoute]int id, [FromBody]LeaveTypeDto leaveType)
         {
             var command = new UpdateLeaveTypeCommand{ LeaveTypeDto = leaveType};
             var response = await _mediator.Send(command);
@@ -55,7 +58,7 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Post([FromRoute]int id)
+        public async Task<ActionResult> Post([FromRoute]int id)
         {
             await _mediator.Send(new DeleteLeaveTypeCommand{ Id = id});
             return NoContent();

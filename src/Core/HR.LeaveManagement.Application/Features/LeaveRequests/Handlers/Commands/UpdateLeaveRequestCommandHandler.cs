@@ -8,13 +8,14 @@ using HR.LeaveManagement.Application.Exceptions;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 using HR.LeaveManagement.Application.Contracts.Persistence;
 using MediatR;
+using HR.LeaveManagement.Domain;
 
 namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 {
     public class UpdateLeaveRequestCommandHandler : IRequestHandler<UpdateLeaveRequestCommand, Unit>
     {
-     private readonly ILeaveRequestRepository _leaveRequestRepository;
-     private readonly ILeaveTypeRepository _leaveTypeRepository;
+        private readonly ILeaveRequestRepository _leaveRequestRepository;
+        private readonly ILeaveTypeRepository _leaveTypeRepository;
         private readonly IMapper _mapper;
         public UpdateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepository, IMapper mapper, ILeaveTypeRepository leaveTypeRepository)
         {
@@ -25,18 +26,23 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
 
         public async Task<Unit> Handle(UpdateLeaveRequestCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateLeaveRequestDtoValidator(_leaveTypeRepository);
-            var validationResult = await validator.ValidateAsync(request.LeaveRequestDto);
-
-            if(validationResult.IsValid == false)
-                throw new ValidatorException(validationResult);
-
             var leaveRequest = await _leaveRequestRepository.Get(request.Id);
+
+            if (leaveRequest == null)
+            {
+                throw new NotFoundException(nameof(LeaveRequest), request.Id);
+            }
+
             if (request.LeaveRequestDto != null)
             {
+                var validator = new UpdateLeaveRequestDtoValidator(_leaveTypeRepository);
+                var validationResult = await validator.ValidateAsync(request.LeaveRequestDto);
+
+                if (validationResult.IsValid == false)
+                    throw new ValidatorException(validationResult);
+
                 _mapper.Map(request.LeaveRequestDto, leaveRequest);
                 await _leaveRequestRepository.Update(leaveRequest);
-                
             }
             else if (request.ChangeLeaveRequestApprovalDto != null)
             {
@@ -44,6 +50,6 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             }
 
             return Unit.Value;
-        }   
+        }
     }
 }

@@ -26,7 +26,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
         public async Task<Unit> Handle(UpdateLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
             var validator = new UpdateLeaveAllocationDtoValidator(_leaveTypeRepository);
-            var validationResult = validator.Validate(request.LeaveAllocationDto);
+            var validationResult = await validator.ValidateAsync(request.LeaveAllocationDto);
 
             if(validationResult.IsValid == false)
                 throw new ValidatorException(validationResult);
