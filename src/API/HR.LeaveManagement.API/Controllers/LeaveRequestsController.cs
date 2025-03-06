@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using HR.LeaveManagement.Application.DTOs.LeaveRequest;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries;
+using HR.LeaveManagement.Application.Reponses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -38,7 +39,7 @@ namespace HR.LeaveManagement.API.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] CreateLeaveRequestDto leaveRequest)
+        public async Task<ActionResult<BaseCommandResponse>> Post([FromBody] CreateLeaveRequestDto leaveRequest)
         {
             var command = new CreateLeaveRequestCommand { LeaveRequestDto = leaveRequest };
             var response = await _mediator.Send(command);

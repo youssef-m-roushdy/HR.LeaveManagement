@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net.Http;
 using HR.LeaveManagement.MVC.Settings;
 using Microsoft.Extensions.Options;
 
@@ -9,20 +7,15 @@ namespace HR.LeaveManagement.MVC.Services.Base
 {
     public partial class Client : IClient
     {
-        private readonly ApiSettings _apiSettings;
-
-        // Use the existing _httpClient field from the generated code
-        public HttpClient HttpClient
+        // Custom constructor that uses the existing _httpClient field from NSwag
+        public Client(HttpClient httpClient, IOptions<ApiSettings> apiSettings) : this(apiSettings.Value.BaseUrl, httpClient)
         {
-            get
-            {
-                return _httpClient;
-            }
+            InitializePartial();
         }
 
-        public Client(IOptions<ApiSettings> apiSettings)
-        {
-            _apiSettings = apiSettings.Value;
-        }
+        public HttpClient HttpClient => _httpClient; // Use NSwag's existing _httpClient
+
+        // Partial method for any extra initialization
+        partial void InitializePartial();
     }
 }

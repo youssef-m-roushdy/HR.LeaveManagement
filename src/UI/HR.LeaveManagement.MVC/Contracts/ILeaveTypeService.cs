@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using HR.LeaveManagement.Application.Reponses;
 using HR.LeaveManagement.MVC.Models;
 using HR.LeaveManagement.MVC.Services.Base;
 
@@ -10,7 +11,7 @@ namespace HR.LeaveManagement.MVC.Contracts
         Task<LeaveTypeVM> GetLeaveTypeDetails(int id);
         Task<Response<int>> CreateLeaveType(CreateLeaveTypeVM leaveType);
 
-        Task UpdateLeaveType(int id, LeaveTypeVM leaveType);
-        Task DeleteLeaveType(int id);
+        Task<Response<int>> UpdateLeaveType(int id, LeaveTypeVM leaveType);
+        Task<Response<int>> DeleteLeaveType(int id);
     }
 }

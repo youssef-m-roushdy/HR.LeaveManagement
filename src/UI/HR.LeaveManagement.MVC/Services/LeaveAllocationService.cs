@@ -1,4 +1,5 @@
 using HR.LeaveManagement.MVC.Contracts;
+using HR.LeaveManagement.MVC.Models;
 using HR.LeaveManagement.MVC.Services.Base;
 using System.Threading.Tasks;
 
@@ -13,29 +14,24 @@ namespace HR.LeaveManagement.MVC.Services
             _client = client;
         }
 
-        public async Task LeaveAllocationsGETAsync()
+        public Task DeleteLeaveAllocation(LeaveAllocationVM leaveAllocation)
         {
-            await _client.LeaveAllocationsGETAsync();
+            throw new NotImplementedException();
         }
 
-        public async Task LeaveAllocationsPOSTAsync(CreateLeaveAllocationDto body)
+        public Task<LeaveAllocationVM> GetLeaveAllocationDetails(int id)
         {
-            await _client.LeaveAllocationsPOSTAsync(body);
+            throw new NotImplementedException();
         }
 
-        public async Task LeaveAllocationsGET2Async(int id)
+        public Task<List<LeaveAllocationVM>> GetLeaveAllocations()
         {
-            await _client.LeaveAllocationsGET2Async(id);
+            throw new NotImplementedException();
         }
 
-        public async Task LeaveAllocationsPUTAsync(int id, UpdateLeaveAllocationDto body)
+        public Task UpdateLeaveAllocation(LeaveAllocationVM leaveAllocation)
         {
-            await _client.LeaveAllocationsPUTAsync(id, body);
-        }
-
-        public async Task LeaveAllocationsDELETEAsync(int id)
-        {
-            await _client.LeaveAllocationsDELETEAsync(id);
+            throw new NotImplementedException();
         }
     }
 }

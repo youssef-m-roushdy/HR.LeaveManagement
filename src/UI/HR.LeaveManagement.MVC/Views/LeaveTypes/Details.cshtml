@@ -1,0 +1,91 @@
+﻿@model HR.LeaveManagement.MVC.Models.LeaveTypeVM
+
+@{
+    ViewData["Title"] = "Leave Type Details";
+}
+
+<h1 class="mb-4">Leave Type Details</h1>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h4 class="card-title">Leave Type Information</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Id)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Id)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.DefaultDays)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.DefaultDays)
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+        <i class="fas fa-edit"></i> Edit
+    </a>
+    <a asp-action="Index" class="btn btn-secondary ml-2">
+        <i class="fas fa-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 5px;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 5px;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    .row {
+        margin-bottom: 1rem;
+    }
+
+    dt {
+        font-weight: bold;
+        color: #555;
+    }
+
+    dd {
+        margin-left: 0;
+        color: #333;
+    }
+</style>

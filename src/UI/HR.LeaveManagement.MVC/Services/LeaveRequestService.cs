@@ -1,4 +1,5 @@
 using HR.LeaveManagement.MVC.Contracts;
+using HR.LeaveManagement.MVC.Models;
 using HR.LeaveManagement.MVC.Services.Base;
 using System.Threading.Tasks;
 
@@ -13,34 +14,24 @@ namespace HR.LeaveManagement.MVC.Services
             _client = client;
         }
 
-        public async Task LeaveRequestsGETAsync()
+        public Task DeleteLeaveRequest(LeaveRequestVM leaveRequest)
         {
-            await _client.LeaveRequestsGETAsync();
+            throw new NotImplementedException();
         }
 
-        public async Task LeaveRequestsPOSTAsync(CreateLeaveRequestDto body)
+        public Task<LeaveRequestVM> GetLeaveRequestDetails(int id)
         {
-            await _client.LeaveRequestsPOSTAsync(body);
+            throw new NotImplementedException();
         }
 
-        public async Task LeaveRequestsGET2Async(int id)
+        public Task<List<LeaveRequestVM>> GetLeaveRequests()
         {
-            await _client.LeaveRequestsGET2Async(id);
+            throw new NotImplementedException();
         }
 
-        public async Task LeaveRequestsPUTAsync(int id, UpdateLeaveRequestDto body)
+        public Task UpdateLeaveRequest(LeaveRequestVM leaveRequest)
         {
-            await _client.LeaveRequestsPUTAsync(id, body);
-        }
-
-        public async Task LeaveRequestsDELETEAsync(int id)
-        {
-            await _client.LeaveRequestsDELETEAsync(id);
-        }
-
-        public async Task ChangeapprovalAsync(int id, ChangeLeaveRequestApprovalDto body)
-        {
-            await _client.ChangeapprovalAsync(id, body);
+            throw new NotImplementedException();
         }
     }
 }

@@ -38,8 +38,9 @@ namespace HR.LeaveManagement.MVC.Services
                 {
                     foreach (var error in apiResponse.Errors)
                     {
-                        response.ValidationErrors += error + Environment.NewLine;
+                        response.ValidationError += error + Environment.NewLine;
                     }
+                    
                 }
                 return response;
             }
@@ -49,13 +50,12 @@ namespace HR.LeaveManagement.MVC.Services
             }
         }
 
-        public async Task DeleteLeaveType(int id)
+        public async Task<Response<int>> DeleteLeaveType(int id)
         {
             try
             {
-                AddBearerToken();
                 await _client.LeaveTypesDELETEAsync(id);
-                return new Response<int>() { Success = true };
+                return new Response<int>() {Success = true};
             }
             catch (ApiException ex)
             {
@@ -65,33 +65,28 @@ namespace HR.LeaveManagement.MVC.Services
 
         public async Task<LeaveTypeVM> GetLeaveTypeDetails(int id)
         {
-            AddBearerToken();
             var leaveType = await _client.LeaveTypesGETAsync(id);
             return _mapper.Map<LeaveTypeVM>(leaveType);
         }
 
         public async Task<List<LeaveTypeVM>> GetLeaveTypes()
         {
-            AddBearerToken();
             var leaveTypes = await _client.LeaveTypesAllAsync();
             return _mapper.Map<List<LeaveTypeVM>>(leaveTypes);
         }
 
-        public async Task UpdateLeaveType(int id, LeaveTypeVM leaveType)
+        public async Task<Response<int>> UpdateLeaveType(int id, LeaveTypeVM leaveType)
         {
             try
             {
                 LeaveTypeDto leaveTypeDto = _mapper.Map<LeaveTypeDto>(leaveType);
-                AddBearerToken();
-                await _client.LeaveTypesPUTAsync(id.ToString(), leaveTypeDto);
-                return new Response<int>() { Success = true };
+                await _client.LeaveTypesPUTAsync(id, leaveTypeDto);
+                return new Response<int>() {Success = true};
             }
             catch (ApiException ex)
             {
                 return ConvertApiExceptions<int>(ex);
             }
         }
-
-        
     }
 }
