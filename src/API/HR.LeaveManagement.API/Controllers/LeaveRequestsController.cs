@@ -8,13 +8,16 @@ using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries;
 using HR.LeaveManagement.Application.Reponses;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace HR.LeaveManagement.API.Controllers
 {
-    [Route("[controller]")]
-    public class LeaveRequestsController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize]
+    public class LeaveRequestsController : ControllerBase
     {
         private readonly IMediator _mediator;
         public LeaveRequestsController(IMediator mediator)

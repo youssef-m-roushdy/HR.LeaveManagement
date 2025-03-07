@@ -31,21 +31,15 @@ namespace HR.LeaveManagement.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateCreated")
+                    b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("EmployeeId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LastModifiedDate")
+                    b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("LeaveTypeId")
@@ -79,13 +73,12 @@ namespace HR.LeaveManagement.Persistence.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DateActioned")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateCreated")
+                    b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateRequested")
@@ -95,21 +88,15 @@ namespace HR.LeaveManagement.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LastModifiedDate")
+                    b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("RequestComments")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RequestingEmployeeId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
@@ -131,20 +118,18 @@ namespace HR.LeaveManagement.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateCreated")
+                    b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("DefaultDays")
                         .HasColumnType("int");
 
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LastModifiedDate")
+                    b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -160,20 +145,20 @@ namespace HR.LeaveManagement.Persistence.Migrations
                         {
                             Id = 1,
                             CreatedBy = "System",
-                            DateCreated = new DateTime(2025, 2, 25, 19, 24, 15, 635, DateTimeKind.Local).AddTicks(335),
+                            DateCreated = new DateTime(2025, 3, 7, 22, 43, 2, 675, DateTimeKind.Local).AddTicks(3169),
                             DefaultDays = 10,
                             LastModifiedBy = "System",
-                            LastModifiedDate = new DateTime(2025, 2, 25, 19, 24, 15, 635, DateTimeKind.Local).AddTicks(364),
+                            LastModifiedDate = new DateTime(2025, 3, 7, 22, 43, 2, 675, DateTimeKind.Local).AddTicks(3205),
                             Name = "Vacation"
                         },
                         new
                         {
                             Id = 2,
                             CreatedBy = "System",
-                            DateCreated = new DateTime(2025, 2, 25, 19, 24, 15, 635, DateTimeKind.Local).AddTicks(368),
+                            DateCreated = new DateTime(2025, 3, 7, 22, 43, 2, 675, DateTimeKind.Local).AddTicks(3209),
                             DefaultDays = 5,
                             LastModifiedBy = "System",
-                            LastModifiedDate = new DateTime(2025, 2, 25, 19, 24, 15, 635, DateTimeKind.Local).AddTicks(369),
+                            LastModifiedDate = new DateTime(2025, 3, 7, 22, 43, 2, 675, DateTimeKind.Local).AddTicks(3210),
                             Name = "Sick Leave"
                         });
                 });

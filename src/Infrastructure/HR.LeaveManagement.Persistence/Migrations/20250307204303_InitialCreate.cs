@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace HR.LeaveManagement.Persistence.Migrations
 {
     /// <inheritdoc />
@@ -19,10 +21,10 @@ namespace HR.LeaveManagement.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DefaultDays = table.Column<int>(type: "int", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -38,11 +40,10 @@ namespace HR.LeaveManagement.Persistence.Migrations
                     NumberOfDays = table.Column<int>(type: "int", nullable: false),
                     LeaveTypeId = table.Column<int>(type: "int", nullable: false),
                     Period = table.Column<int>(type: "int", nullable: false),
-                    EmployeeId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -65,15 +66,14 @@ namespace HR.LeaveManagement.Persistence.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LeaveTypeId = table.Column<int>(type: "int", nullable: false),
                     DateRequested = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RequestComments = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RequestComments = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateActioned = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Approved = table.Column<bool>(type: "bit", nullable: true),
                     Cancelled = table.Column<bool>(type: "bit", nullable: false),
-                    RequestingEmployeeId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -84,6 +84,15 @@ namespace HR.LeaveManagement.Persistence.Migrations
                         principalTable: "LeaveTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "LeaveTypes",
+                columns: new[] { "Id", "CreatedBy", "DateCreated", "DefaultDays", "LastModifiedBy", "LastModifiedDate", "Name" },
+                values: new object[,]
+                {
+                    { 1, "System", new DateTime(2025, 3, 7, 22, 43, 2, 675, DateTimeKind.Local).AddTicks(3169), 10, "System", new DateTime(2025, 3, 7, 22, 43, 2, 675, DateTimeKind.Local).AddTicks(3205), "Vacation" },
+                    { 2, "System", new DateTime(2025, 3, 7, 22, 43, 2, 675, DateTimeKind.Local).AddTicks(3209), 5, "System", new DateTime(2025, 3, 7, 22, 43, 2, 675, DateTimeKind.Local).AddTicks(3210), "Sick Leave" }
                 });
 
             migrationBuilder.CreateIndex(
