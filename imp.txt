@@ -1,4 +1,15 @@
-you want to migrate database from the root
-dotnet ef migrations add InitialCreate --project ./src/Infrastructure/HR.LeaveManagement.Persistence/HR.LeaveManagement.Persistence.csproj --startup-project ./src/API/HR.LeaveManagement.API/HR.LeaveManagement.API.csproj
-you want to update database from the root
-dotnet ef database update --project ./src/Infrastructure/HR.LeaveManagement.Persistence/HR.LeaveManagement.Persistence.csproj --startup-project ./src/API/HR.LeaveManagement.API/HR.LeaveManagement.API.csproj
+you want to migrate database from the root:
+dotnet ef migrations add InitialCreate --context LeaveManagementDbContext   --project ./src/Infrastructure/HR.LeaveManagement.Persistence/HR.LeaveManagement.Persistence.csproj   --startup-project ./src/API/HR.LeaveManagement.API/HR.LeaveManagement.API.csproj
+
+you want to update database from the root:
+dotnet ef database update --context LeaveManagementDbContext   --project ./src/Infrastructure/HR.LeaveManagement.Persistence/HR.LeaveManagement.Persistence.csproj   --startup-project ./src/API/HR.LeaveManagement.API/HR.LeaveManagement.API.csproj
+
+NSwag Client:
+nswag openapi2csclient /input:swagger.json /output:MyClient.cs /generateClientInterfaces:true /generateClientClasses:true /generateResponseClasses:true /responseClass:ApiResponse /useBaseUrl:true /injectHttpClient:true /verbosity:Detailed
+
+
+Migration Identity:
+dotnet ef migrations add IdentityUser --context LeaveManagementIdentityDbContext --project ./src/Infrastructure/HR.LeaveManagement.Identity/HR.LeaveManagement.Identity.csproj --startup-project ./src/API/HR.LeaveManagement.API/HR.LeaveManagement.API.csproj
+
+Identity Update:
+dotnet ef database update --context LeaveManagementIdentityDbContext --project ./src/Infrastructure/HR.LeaveManagement.Identity/HR.LeaveManagement.Identity.csproj --startup-project ./src/API/HR.LeaveManagement.API/HR.LeaveManagement.API.csproj

@@ -7,7 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Hanssens.Net; // Add this for LocalStorage
 using AutoMapper;
 using System.Reflection;
-using Microsoft.Extensions.Options; // Add this for AutoMapper
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication.Cookies; // Add this for AutoMapper
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,17 @@ builder.Services.AddHttpClient<IClient, Client>()
         var apiSettings = sp.GetRequiredService<IOptions<ApiSettings>>().Value;
         return new Client(apiSettings.BaseUrl, httpClient); // Pass baseUrl properly
     });
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.Configure<CookiePolicyOptions>(options => 
+{
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -43,6 +55,9 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseCookiePolicy();
+app.UseAuthentication();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

@@ -17,6 +17,7 @@ namespace HR.LeaveManagement.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LeaveTypesController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -44,7 +45,7 @@ namespace HR.LeaveManagement.API.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [Authorize]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<BaseCommandResponse>> Post([FromBody]CreateLeaveTypeDto leaveType)
         {
             var command = new CreateLeaveTypeCommand{ LeaveTypeDto = leaveType};
@@ -53,9 +54,11 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status304NotModified)]
-        [Authorize]
-        public async Task<ActionResult> Post([FromRoute]int id, [FromBody]LeaveTypeDto leaveType)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        [Authorize(Roles = "Administrator")]
+        public async Task<ActionResult> Update([FromRoute]int id, [FromBody]LeaveTypeDto leaveType)
         {
             var command = new UpdateLeaveTypeCommand{ LeaveTypeDto = leaveType};
             var response = await _mediator.Send(command);
@@ -63,8 +66,11 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize]
-        public async Task<ActionResult> Post([FromRoute]int id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        [Authorize(Roles = "Administrator")]
+        public async Task<ActionResult> Delete([FromRoute]int id)
         {
             await _mediator.Send(new DeleteLeaveTypeCommand{ Id = id});
             return NoContent();
