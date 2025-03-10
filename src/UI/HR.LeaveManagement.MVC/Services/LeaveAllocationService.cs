@@ -5,33 +5,44 @@ using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.MVC.Services
 {
-    public class LeaveAllocationService : ILeaveAllocationService
+    public class LeaveAllocationService : BaseHttpService, ILeaveAllocationService
     {
-        private readonly IClient _client;
+        private readonly ILocalStorageService _localStorageService;
+        private readonly IClient _httpClient;
 
-        public LeaveAllocationService(IClient client)
+        public LeaveAllocationService(IClient httpClient, ILocalStorageService localStorageService) : base(httpClient, localStorageService)
         {
-            _client = client;
+            _httpClient = httpClient;
+            _localStorageService = localStorageService;
         }
 
-        public Task DeleteLeaveAllocation(LeaveAllocationVM leaveAllocation)
+        public async Task<Response<int>> CreateLeaveAllocations(int leaveTypeId)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<LeaveAllocationVM> GetLeaveAllocationDetails(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<LeaveAllocationVM>> GetLeaveAllocations()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateLeaveAllocation(LeaveAllocationVM leaveAllocation)
-        {
-            throw new NotImplementedException();
+            try
+            {
+                var response = new Response<int>();
+                CreateLeaveAllocationDto createLeaveAllocation = new CreateLeaveAllocationDto() {LeaveTypeId = leaveTypeId};
+                AddBearerToken();
+                var apiResponse = await _client.LeaveAllocationsPOSTAsync(createLeaveAllocation);
+                if(apiResponse.Success)
+                {
+                    response.Success = true;
+                }
+                else
+                {
+                    foreach (var error in apiResponse.Errors)
+                    {
+                        response.ValidationError += error + Environment.NewLine;
+                    }
+                }
+                return response;
+                
+            }
+            catch (ApiException ex)
+            {
+                
+                return ConvertApiExceptions<int>(ex);
+            }
         }
     }
 }
