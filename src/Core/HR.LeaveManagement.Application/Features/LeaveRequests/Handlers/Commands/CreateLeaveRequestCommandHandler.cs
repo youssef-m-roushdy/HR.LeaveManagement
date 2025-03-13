@@ -21,45 +21,48 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
 {
     public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveRequestCommand, BaseCommandResponse>
     {
-        private readonly ILeaveRequestRepository _leaveRequestRepository;
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
-        private readonly ILeaveAllocationRepository _leaveAllocationRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailSender _emailSender;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         public CreateLeaveRequestCommandHandler(
-        ILeaveRequestRepository leaveRequestRepository,
+        IUnitOfWork unitOfWork,
         IMapper mapper,
-        ILeaveTypeRepository leaveTypeRepository,
         IEmailSender emailSender,
-        IHttpContextAccessor httpContextAccessor,
-        ILeaveAllocationRepository leaveAllocationRepositor
+        IHttpContextAccessor httpContextAccessor
         )
         {
-            _leaveRequestRepository = leaveRequestRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _leaveTypeRepository = leaveTypeRepository;
             _emailSender = emailSender;
             _httpContextAccessor = httpContextAccessor;
-            _leaveAllocationRepository = leaveAllocationRepositor;
         }
 
         public async Task<BaseCommandResponse> Handle(CreateLeaveRequestCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseCommandResponse();
-            var validator = new CreateLeaveRequestDtoValidator(_leaveTypeRepository);
+            var validator = new CreateLeaveRequestDtoValidator(_unitOfWork.LeaveTypeRepository);
             var validationResult = await validator.ValidateAsync(request.LeaveRequestDto);
             var userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "uid")?.Value;
 
-            var allocation = await _leaveAllocationRepository.GetUserAllocations(userId, request.LeaveRequestDto.LeaveTypeId);
-            int daysRequested = (int)(request.LeaveRequestDto.EndDate - request.LeaveRequestDto.StartDate).TotalDays;
-
-            if (daysRequested > allocation.NumberOfDays)
+            var allocation = await _unitOfWork.LeaveAllocationRepository.GetUserAllocations(userId, request.LeaveRequestDto.LeaveTypeId);
+            if (allocation is null)
             {
-                validationResult.Errors.Add(new FluentValidation.Results.ValidationFailure(
-                    nameof(request.LeaveRequestDto.EndDate), "You do not have enough days for this request"
-                ));
+                validationResult.Errors.Add(new FluentValidation.Results.ValidationFailure(nameof(request.LeaveRequestDto.LeaveTypeId),
+                "You do not have any allocation for this type leave type."));
             }
+            else
+            {
+                int daysRequested = (int)(request.LeaveRequestDto.EndDate - request.LeaveRequestDto.StartDate).TotalDays;
+
+                if (daysRequested > allocation.NumberOfDays)
+                {
+                    validationResult.Errors.Add(new FluentValidation.Results.ValidationFailure(
+                        nameof(request.LeaveRequestDto.EndDate), "You do not have enough days for this request"
+                    ));
+                }
+            }
+
 
             if (validationResult.IsValid == false)
             {
@@ -72,12 +75,13 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
                 var leaveRequest = _mapper.Map<LeaveRequest>(request.LeaveRequestDto);
                 leaveRequest.RequestingEmployeeId = userId;
                 leaveRequest.DateRequested = DateTime.UtcNow;
-                leaveRequest = await _leaveRequestRepository.Add(leaveRequest);
+                leaveRequest = await _unitOfWork.LeaveRequestRepository.Add(leaveRequest);
+                await _unitOfWork.Save();
 
                 response.Success = true;
                 response.Message = "Creation successful";
                 response.Id = leaveRequest.Id;
-                
+
                 try
                 {
 
