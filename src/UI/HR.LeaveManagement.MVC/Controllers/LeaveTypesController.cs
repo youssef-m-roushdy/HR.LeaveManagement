@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.MVC.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class LeaveTypesController : Controller
     {
         private readonly ILeaveTypeService _leaveTypeService;

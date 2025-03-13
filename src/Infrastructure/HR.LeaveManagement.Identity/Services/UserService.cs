@@ -17,6 +17,18 @@ namespace HR.LeaveManagement.Identity.Services
             _userManager = userManager;
         }
 
+        public async Task<Employee> GetEmployee(string userId)
+        {
+            var employee = await _userManager.FindByIdAsync(userId);
+            return new Employee
+            {
+                Email = employee.Email,
+                Id = employee.Id,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName
+            };
+        }
+
         public async Task<List<Employee>> GetEmployees()
         {
             var employees = await _userManager.GetUsersInRoleAsync("Employee");

@@ -13,6 +13,7 @@ builder.Services.ConfigurePersistenceServices(builder.Configuration);
 builder.Services.ConfigureIdentityService(builder.Configuration);
 
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {

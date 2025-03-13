@@ -32,7 +32,7 @@ namespace HR.LeaveManagement.MVC.Services.Base
             }
             else
             {
-                return new Response<Guid>() { Message = "Something went wrong, please try again.", Success = false };
+                return new Response<Guid>() { Message = ex.Message, Success = false };
             }
         }
 

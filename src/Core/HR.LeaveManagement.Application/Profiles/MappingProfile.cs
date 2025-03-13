@@ -16,7 +16,9 @@ namespace HR.LeaveManagement.Application.Profiles
         public MappingProfile()
         {
             CreateMap<LeaveRequest, LeaveRequestDto>().ReverseMap();
-            CreateMap<LeaveRequest, LeaveRequestListDto>().ReverseMap();
+            CreateMap<LeaveRequest, LeaveRequestListDto>()
+            .ForMember(dest => dest.DateRequested, opt => opt.MapFrom(src => src.DateCreated))
+            .ReverseMap();
             CreateMap<LeaveAllocation, LeaveAllocationDto>().ReverseMap();
             CreateMap<LeaveType, LeaveTypeDto>().ReverseMap();
             CreateMap<CreateLeaveTypeDto, LeaveType>().ReverseMap();
