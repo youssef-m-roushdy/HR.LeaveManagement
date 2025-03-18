@@ -61,7 +61,7 @@ namespace HR.LeaveManagement.MVC.Controllers
         public async Task<IActionResult> Logout(string returnUrl)
         {
             returnUrl ??= Url.Content("~/");
-            await _authService.Logout();
+            await _authService.LogoutAsync();
             return LocalRedirect(returnUrl);
         }
     }

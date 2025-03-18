@@ -67,20 +67,29 @@ namespace HR.LeaveManagement.MVC.Controllers
             return View(leaveRequest);
         }
 
+        // GET: LeaveRequest/Index
         [Authorize(Roles = "Administrator")]
-        // GET: LeaveRequest
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> AdminDashboard()
         {
             var model = await _leaveRequestService.GetAdminLeaveRequestList();
-            return View(model);
+            return View("AdminIndex", model);
         }
 
+        [Authorize]
+        public async Task<ActionResult> UserDashboard()
+        {
+            var userModel = await _leaveRequestService.GetUserLeaveRequests();
+            return View("UserIndex", userModel);
+        }
+
+        // GET: LeaveRequest/Details/5
         public async Task<ActionResult> Details(int id)
         {
             var model = await _leaveRequestService.GetLeaveRequest(id);
             return View(model);
         }
 
+        // POST: LeaveRequest/ApproveRequest/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
@@ -89,6 +98,35 @@ namespace HR.LeaveManagement.MVC.Controllers
             try
             {
                 await _leaveRequestService.ApproveLeaveRequest(id, approved);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        // GET: LeaveRequest/Delete/5
+        [Authorize(Roles = "Administrator")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var model = await _leaveRequestService.GetLeaveRequest(id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+            return View(model);
+        }
+
+        // POST: LeaveRequest/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<ActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                await _leaveRequestService.DeleteLeaveRequest(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

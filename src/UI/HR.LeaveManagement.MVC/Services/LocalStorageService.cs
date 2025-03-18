@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Hanssens.Net;
@@ -9,40 +10,46 @@ namespace HR.LeaveManagement.MVC.Services
 {
     public class LocalStorageService : ILocalStorageService
     {
-        private LocalStorage _storage;
-        public LocalStorageService(LocalStorage storage)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public LocalStorageService(IHttpContextAccessor httpContextAccessor)
         {
-            var config = new LocalStorageConfiguration()
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public Task SetTokenAsync(string token)
+        {
+            var jwtHandler = new JwtSecurityTokenHandler();
+            var jwtToken = jwtHandler.ReadJwtToken(token);
+            var expClaim = jwtToken.Payload.Exp;
+
+            DateTimeOffset expirationTime = expClaim.HasValue
+                ? DateTimeOffset.FromUnixTimeSeconds(expClaim.Value)
+                : DateTimeOffset.UtcNow.AddMinutes(30); // Default if no expiration is set
+
+            var cookieOptions = new CookieOptions
             {
-                AutoLoad = true,
-                AutoSave = true,
-                Filename = "HR.LEAVEMGMT"
+                HttpOnly = true, // Prevent client-side script access
+                Secure = true,   // Ensure the cookie is only sent over HTTPS
+                Expires = expirationTime.UtcDateTime,
+                SameSite = SameSiteMode.Strict // Prevent CSRF attacks
             };
-            _storage = new LocalStorage(config);
+
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("JWToken", token, cookieOptions);
+
+            return Task.CompletedTask;
         }
 
-        public void ClearStorage(List<string> keys)
+        public Task<string?> GetTokenAsync()
         {
-            foreach (var key in keys)
-            {
-                _storage.Remove(key);
-            }
+            var token = _httpContextAccessor.HttpContext?.Request.Cookies["JWToken"];
+            return Task.FromResult(token);
         }
 
-        public bool Exists(string key)
+        public Task RemoveTokenAsync()
         {
-            return _storage.Exists(key);
-        }
-
-        public T GetStorageValue<T>(string key)
-        {
-            return _storage.Get<T>(key);
-        }
-
-        public void SetStorageValue<T>(string key, T value)
-        {
-            _storage.Store(key, value);
-            _storage.Persist();
+            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("JWToken");
+            return Task.CompletedTask;
         }
     }
 }

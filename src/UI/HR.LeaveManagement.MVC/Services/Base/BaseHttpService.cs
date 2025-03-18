@@ -9,22 +9,20 @@ namespace HR.LeaveManagement.MVC.Services.Base
 {
     public class BaseHttpService
     {
-        protected readonly ILocalStorageService _localStorage;
-
         protected IClient _client;
+        private readonly ILocalStorageService _localStorageService;
 
-        public BaseHttpService(IClient client, ILocalStorageService localStorage)
+        public BaseHttpService(IClient client, ILocalStorageService localStorageService)
         {
             _client = client;
-            _localStorage = localStorage;
-
+            _localStorageService = localStorageService;
         }
 
         protected Response<Guid> ConvertApiExceptions<Guid>(ApiException ex)
         {
             if (ex.StatusCode == 400)
             {
-                return new Response<Guid>() { Message = "Validation errors have occured.", ValidationError = ex.Response, Success = false };
+                return new Response<Guid>() { Message = "Validation errors have occurred.", ValidationError = ex.Response, Success = false };
             }
             else if (ex.StatusCode == 404)
             {
@@ -36,11 +34,18 @@ namespace HR.LeaveManagement.MVC.Services.Base
             }
         }
 
-        protected void AddBearerToken()
+        protected async Task AddBearerToken()
         {
-            if (_localStorage.Exists("token"))
-                _client.HttpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", _localStorage.GetStorageValue<string>("token"));
+            // Retrieve the JWT token from the cookie
+            var token = await _localStorageService.GetTokenAsync();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new InvalidOperationException("User is not authenticated.");
+            }
+
+            // Set the Authorization header
+            _client.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
     }
 }

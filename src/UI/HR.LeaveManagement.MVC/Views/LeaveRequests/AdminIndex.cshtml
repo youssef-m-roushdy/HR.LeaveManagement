@@ -1,7 +1,8 @@
 @model AdminLeaveRequestViewVM
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Admin Leave Requests";
+    bool isAdmin = User.IsInRole("Administrator");
 }
 
 <div class="row">
@@ -10,9 +11,8 @@
             <span class="info-box-icon bg-info"><i class="fas fa-tachometer-alt"></i></span>
             <div class="info-box-content">
                 <span class="info-box-text">@Model.TotalRequests</span>
-                <span class="info-box-number">@Html.DisplayNameFor(model => model.TotalRequests)</span>
+                <span class="info-box-number">Total Requests</span>
             </div>
-            <!-- /.info-box-content -->
         </div>
     </div>
     <div class="col-md-3">
@@ -20,9 +20,8 @@
             <span class="info-box-icon bg-warning"><i class="fas fa-exclamation-circle"></i></span>
             <div class="info-box-content">
                 <span class="info-box-text">@Model.PendingRequests</span>
-                <span class="info-box-number">@Html.DisplayNameFor(model => model.PendingRequests)</span>
+                <span class="info-box-number">Pending Requests</span>
             </div>
-            <!-- /.info-box-content -->
         </div>
     </div>
     <div class="col-md-3">
@@ -30,9 +29,8 @@
             <span class="info-box-icon bg-success"><i class="far fa-check-circle"></i></span>
             <div class="info-box-content">
                 <span class="info-box-text">@Model.ApprovedRequests</span>
-                <span class="info-box-number">@Html.DisplayNameFor(model => model.ApprovedRequests)</span>
+                <span class="info-box-number">Approved Requests</span>
             </div>
-            <!-- /.info-box-content -->
         </div>
     </div>
     <div class="col-md-3">
@@ -40,9 +38,8 @@
             <span class="info-box-icon bg-danger"><i class="far fa-times-circle"></i></span>
             <div class="info-box-content">
                 <span class="info-box-text">@Model.RejectedRequests</span>
-                <span class="info-box-number">@Html.DisplayNameFor(model => model.RejectedRequests)</span>
+                <span class="info-box-number">Rejected Requests</span>
             </div>
-            <!-- /.info-box-content -->
         </div>
     </div>
 </div>
@@ -94,7 +91,33 @@
                     }
                 </td>
                 <td>
-                    @if (!item.Cancelled)
+                    @if (!item.Cancelled && isAdmin)
+                    {
+                        <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">
+                            <i class="fa fa-file"></i> Review
+                        </a>
+                        <form asp-action="ApproveRequest" method="post" style="display: inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <input type="hidden" name="approved" value="true" />
+                            <button type="submit" class="btn btn-outline-success">
+                                <i class="fa fa-check"></i> Approve
+                            </button>
+                        </form>
+                        <form asp-action="ApproveRequest" method="post" style="display: inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <input type="hidden" name="approved" value="false" />
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fa fa-times"></i> Reject
+                            </button>
+                        </form>
+                        <form asp-action="Delete" method="post" style="display: inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    }
+                    else if (!item.Cancelled)
                     {
                         <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">
                             <i class="fa fa-file"></i> Review

@@ -24,9 +24,9 @@
 <div class="alert alert-@className" role="alert">
     <h4 class="alert-heading">@headingText</h4>
     <p>
-        <strong>Employee name:</strong>  @Model.Employee.Firstname @Model.Employee.Lastname <br />
+        <strong>Employee name:</strong> @Model.Employee.Firstname @Model.Employee.Lastname <br />
     </p>
-    <hr/>
+    <hr />
     <p>
         Date Requested - @Html.DisplayFor(model => model.DateRequested)
     </p>
@@ -67,8 +67,8 @@
     @if (Model.Approved == null)
     {
         <form method="post" asp-action="ApproveRequest">
-            <input name="id" type="hidden" value="@Model.Id"/>
-            <input name="approved" type="hidden" value="true"/>
+            <input name="id" type="hidden" value="@Model.Id" />
+            <input name="approved" type="hidden" value="true" />
             <button class="btn btn-success">
                 Approve
             </button>
@@ -83,7 +83,17 @@
 
     }
 
-    <a class="btn btn-outline-secondary" asp-action="Index">
+    @if (User.IsInRole("Employee"))
+    {
+        <a class="btn btn-outline-secondary" asp-action="UserDashboard">
         Back to List
     </a>
+    }
+    @if (User.IsInRole("Administrator"))
+    {
+        <a class="btn btn-outline-secondary" asp-action="AdminDashboard">
+        Back to List
+    </a>
+    }
+
 </div>

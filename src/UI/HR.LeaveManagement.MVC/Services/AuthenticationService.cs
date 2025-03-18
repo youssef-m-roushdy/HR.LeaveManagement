@@ -15,15 +15,17 @@ namespace HR.LeaveManagement.MVC.Services
 {
     public class AuthenticationService : BaseHttpService, Contracts.IAuthenticationService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILocalStorageService _localStorageService;
         private JwtSecurityTokenHandler _tokenHandler;
-        public AuthenticationService(IClient client, ILocalStorageService localStorage, IHttpContextAccessor httpContextAccessor, IMapper mapper)
-        : base(client, localStorage)
+        public AuthenticationService(IClient client, ILocalStorageService localStorageService, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        : base(client, localStorageService)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _localStorageService = localStorageService;
             _tokenHandler = new JwtSecurityTokenHandler();
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<bool> Authenticate(string email, string password)
         {
@@ -32,14 +34,20 @@ namespace HR.LeaveManagement.MVC.Services
                 AuthRequest authenticationRequest = new() { Email = email, Password = password };
                 var authenticationResponse = await _client.LoginAsync(authenticationRequest);
 
-                if (authenticationResponse.Token != string.Empty)
+                if (!string.IsNullOrEmpty(authenticationResponse.Token))
                 {
-                    //Get Claims from token and Build auth user object
+                    // Store JWT token in a secure cookie
+                    await _localStorageService.SetTokenAsync(authenticationResponse.Token);
+
+                    // Extract claims from JWT token
                     var tokenContent = _tokenHandler.ReadJwtToken(authenticationResponse.Token);
                     var claims = ParseClaims(tokenContent);
+
+                    // Create a ClaimsPrincipal for cookie-based authentication
                     var user = new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
-                    var login = _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, user);
-                    _localStorage.SetStorageValue("token", authenticationResponse.Token);
+
+                    // Sign in the user
+                    await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, user);
 
                     return true;
                 }
@@ -51,9 +59,12 @@ namespace HR.LeaveManagement.MVC.Services
             }
         }
 
-        public async Task Logout()
+        public async Task LogoutAsync()
         {
-            _localStorage.ClearStorage(new List<string> { "token" });
+            // Remove the JWT token cookie
+            await _localStorageService.RemoveTokenAsync();
+
+            // Sign out the cookie-based authentication session
             await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 

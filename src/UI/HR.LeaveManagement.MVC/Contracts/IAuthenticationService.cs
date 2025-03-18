@@ -10,6 +10,6 @@ namespace HR.LeaveManagement.MVC.Contracts
     {
         Task<bool> Authenticate(string email, string password);
         Task<bool> Register(RegisterVM registration);
-        Task Logout();
+        Task LogoutAsync();
     }
 }
