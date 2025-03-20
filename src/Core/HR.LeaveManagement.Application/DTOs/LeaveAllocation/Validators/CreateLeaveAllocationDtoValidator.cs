@@ -21,7 +21,8 @@ namespace HR.LeaveManagement.Application.DTOs.LeaveAllocation.Validators
                 var leaveTypeExists = await _leaveTypeRepository.Exists(id);
                 return leaveTypeExists;
             })
-            .WithMessage("{PropertyName} does not exist.");
+            .WithMessage("{PropertyName} does not exist.")
+            .OverridePropertyName("LeaveTypeId"); // Explicitly set the property name
         }
     }
 }

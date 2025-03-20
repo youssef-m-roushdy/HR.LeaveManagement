@@ -43,6 +43,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             var response = new BaseCommandResponse();
             var validator = new CreateLeaveRequestDtoValidator(_unitOfWork.LeaveTypeRepository);
             var validationResult = await validator.ValidateAsync(request.LeaveRequestDto);
+
             var userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "uid")?.Value;
 
             var allocation = await _unitOfWork.LeaveAllocationRepository.GetUserAllocations(userId, request.LeaveRequestDto.LeaveTypeId);
@@ -100,12 +101,10 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
                 }
                 catch (Exception ex)
                 {
-
+                    Console.WriteLine($"Email sending failed: {ex.Message}");
                 }
 
             }
-
-
             return response;
         }
     }
